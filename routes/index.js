@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const result = require('../libs/result')
+const emailUtils = require('../libs/emailUtils')
 
 router.get('/', function (req, res, next) {
   try {

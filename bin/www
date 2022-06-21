@@ -1,4 +1,5 @@
 require('dotenv').config()
+const tasks = require('../tasks')
 const app = require('../app')
 const http = require('http')
 
@@ -37,3 +38,5 @@ function onListening() {
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
   console.log('Listening on ' + bind)
 }
+
+tasks.init()

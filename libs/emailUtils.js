@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
 
 const queue = []
-const QUEUE_WAIT_TIME = 5 * 1000
+const QUEUE_WAIT_TIME = 20 * 1000
 
 let transporter
 
@@ -47,17 +47,20 @@ const sendInQueue = (subject, text) => {
   queue.push({ subject, text })
 }
 
+const doOnQueue = async () => {
+  const ct = queue.shift()
+  if (!ct) {
+    return
+  }
+  await send(ct.subject, ct.text)
+}
+
 const runQueue = async () => {
   while (true) {
     await sleep(QUEUE_WAIT_TIME)
     // console.log('queue: ', queue.length)
 
-    const ct = queue.shift()
-    if (!ct) {
-      continue
-    }
-
-    send(ct.subject, ct.text)
+    await doOnQueue()
   }
 }
 
@@ -65,5 +68,6 @@ module.exports = {
   init,
   send,
   sendInQueue,
+  doOnQueue,
   runQueue,
 }
