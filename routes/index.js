@@ -5,7 +5,23 @@ const emailUtils = require('../libs/emailUtils')
 
 router.get('/', function (req, res, next) {
   try {
-    res.json(result(0, 'haha', { aaa: 222 }))
+    res.json(result(req.query ? 0 : 1))
+
+    const data = req.query?.data
+    if (!data) {
+      return
+    }
+
+    let datao
+    try {
+      datao = JSON.parse(data)
+    } catch (e) {
+      datao = data
+    }
+
+    const subject = datao.subject ?? 'notice'
+    const text = datao.text ?? datao
+    emailUtils.sendInQueue(subject, text)
   } catch (e) {
     console.error(e)
     res.json(result(2, 'system error, retry'))
