@@ -5,10 +5,9 @@ const emailUtils = require('../libs/emailUtils')
 
 router.get('/', function (req, res, next) {
   try {
-    res.json(result(req.query ? 0 : 1))
-
     const data = req.query?.data
     if (!data) {
+      res.json(result(1, 'param data empty'))
       return
     }
 
@@ -22,6 +21,8 @@ router.get('/', function (req, res, next) {
     const subject = datao.subject ?? 'notice'
     const text = datao.text ?? datao
     emailUtils.sendInQueue(subject, text)
+
+    res.json(result(0))
   } catch (e) {
     console.error(e)
     res.json(result(2, 'system error, retry'))
