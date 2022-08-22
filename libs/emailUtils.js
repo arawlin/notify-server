@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
 
 const queue = []
-const QUEUE_WAIT_TIME = 20 * 1000
+const QUEUE_WAIT_TIME = 20
 
 let transporter
 
@@ -13,14 +13,16 @@ const init = () => {
 
   transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
     secure: true,
+    debug: false,
     auth: {
       user: process.env.EMAIL_NAME,
       pass: process.env.EMAIL_PASS,
     },
   })
 
-  console.log('email init success')
+  console.log('email init success', process.env)
 }
 
 const send = async (subject, text) => {
@@ -31,7 +33,7 @@ const send = async (subject, text) => {
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_NAME,
+      from: process.env.EMAIL_FROM,
       to: process.env.EMAIL_TO,
       subject,
       text,
@@ -39,7 +41,7 @@ const send = async (subject, text) => {
 
     console.log('email:', info.messageId, new Date(), subject, text)
   } catch (e) {
-    console.error(e)
+    console.error(`${new Date()} - ${subject} - ${text}`, e)
   }
 }
 
@@ -57,7 +59,7 @@ const doOnQueue = async () => {
 
 const runQueue = async () => {
   while (true) {
-    await sleep(QUEUE_WAIT_TIME)
+    await sleep(QUEUE_WAIT_TIME * 1000)
     // console.log('queue: ', queue.length)
 
     await doOnQueue()
@@ -65,6 +67,7 @@ const runQueue = async () => {
 }
 
 module.exports = {
+  QUEUE_WAIT_TIME,
   init,
   send,
   sendInQueue,
