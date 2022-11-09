@@ -20,7 +20,11 @@ router.get('/', function (req, res, next) {
 
     const subject = datao.subject ?? 'notice'
     const text = datao.text ?? datao
-    emailUtils.sendInQueue(subject, text)
+
+    // maybe nullish
+    const emails = req.query?.emails
+
+    emailUtils.sendInQueue(subject, text, emails)
 
     res.json(result(0))
   } catch (e) {

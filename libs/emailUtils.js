@@ -25,7 +25,7 @@ const init = () => {
   console.log('email init success', process.env)
 }
 
-const send = async (subject, text) => {
+const send = async (subject, text, to) => {
   if (!subject || !text) {
     console.log('subject or text is empty')
     return
@@ -35,6 +35,7 @@ const send = async (subject, text) => {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: process.env.EMAIL_TO,
+      to: to ?? process.env.EMAIL_TO,
       subject,
       text,
     })
@@ -45,8 +46,8 @@ const send = async (subject, text) => {
   }
 }
 
-const sendInQueue = (subject, text) => {
-  queue.push({ subject, text })
+const sendInQueue = (subject, text, to) => {
+  queue.push({ subject, text, to })
 }
 
 const doOnQueue = async () => {
@@ -54,7 +55,7 @@ const doOnQueue = async () => {
   if (!ct) {
     return
   }
-  await send(ct.subject, ct.text)
+  await send(ct.subject, ct.text, ct.to)
 }
 
 const runQueue = async () => {
