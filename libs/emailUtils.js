@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
 
 const queue = []
-const QUEUE_WAIT_TIME = 20
+const QUEUE_WAIT_TIME = 5
 
 let transporter
 
