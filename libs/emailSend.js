@@ -9,7 +9,7 @@ const config = {
 const send = async (subject, text, emails) => {
   try {
     const data = { subject, text }
-    config.params = { data: JSON.stringify(data), emails }
+    config.params = { data: JSON.stringify(data), emails: emails ?? process.env.EMAILS }
     const res = await axios.get(process.env.EMAIL_API_PATH, config)
     return res?.data
   } catch (e) {
