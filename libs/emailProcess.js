@@ -31,17 +31,21 @@ const send = async (subject, text, to) => {
     return
   }
 
-  try {
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: to || process.env.EMAIL_TO,
-      subject,
-      text,
-    })
+  if (!to || to.indexOf('@') < 0) {
+    to = process.env.EMAIL_TO
+  }
+  const mo = {
+    from: process.env.EMAIL_FROM,
+    to,
+    subject,
+    text,
+  }
 
-    console.log('email:', info.messageId, new Date(), subject, text)
+  try {
+    const info = await transporter.sendMail(mo)
+    console.log('email:', info.messageId, new Date(), mo)
   } catch (e) {
-    console.error(`${new Date()} - ${subject} - ${text}`, e)
+    console.error(`${new Date()} - ${mo}`, e)
   }
 }
 
@@ -72,6 +76,7 @@ const doOnQueue = async () => {
 
     txs.push(ct.text)
   }
+  // console.log(cts)
 
   for (const to in cts) {
     const subs = cts[to]
