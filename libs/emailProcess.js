@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
 
 const queue = []
-const QUEUE_WAIT_TIME = 5
+const QUEUE_WAIT_TIME = 10
 
 let transporter
 
@@ -34,8 +34,7 @@ const send = async (subject, text, to) => {
   try {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_TO,
-      to: to ?? process.env.EMAIL_TO,
+      to: to || process.env.EMAIL_TO,
       subject,
       text,
     })
@@ -51,11 +50,38 @@ const sendInQueue = (subject, text, to) => {
 }
 
 const doOnQueue = async () => {
-  const ct = queue.shift()
-  if (!ct) {
-    return
+  // {"to": {"subject": ["text0", "text1"]}}
+  const cts = {}
+  while (true) {
+    const ct = queue.shift()
+    if (!ct) {
+      break
+    }
+
+    let subs = cts[ct.to]
+    if (!subs) {
+      cts[ct.to] = {}
+      subs = cts[ct.to]
+    }
+
+    let txs = subs[ct.subject]
+    if (!txs) {
+      subs[ct.subject] = []
+      txs = subs[ct.subject]
+    }
+
+    txs.push(ct.text)
   }
-  await send(ct.subject, ct.text, ct.to)
+
+  for (const to in cts) {
+    const subs = cts[to]
+    for (const s in subs) {
+      const txs = subs[s]
+      const sextend = txs.length > 1 ? ' merged' : ''
+      await send(s + sextend, txs + '', to)
+      await sleep(1 * 1000)
+    }
+  }
 }
 
 const runQueue = async () => {

@@ -18,8 +18,8 @@ router.get('/', function (req, res, next) {
       datao = data
     }
 
-    const subject = datao.subject ?? 'notice'
-    const text = datao.text ?? datao
+    const subject = datao?.subject || 'notice'
+    const text = datao?.text || datao
 
     // maybe nullish
     const emails = req.query?.emails
