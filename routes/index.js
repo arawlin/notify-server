@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const result = require('../libs/result')
-const emailUtils = require('../libs/emailUtils')
+const emailProcess = require('../libs/emailProcess')
 
 router.get('/', function (req, res, next) {
   try {
@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
     // maybe nullish
     const emails = req.query?.emails
 
-    emailUtils.sendInQueue(subject, text, emails)
+    emailProcess.sendInQueue(subject, text, emails)
 
     res.json(result(0))
   } catch (e) {

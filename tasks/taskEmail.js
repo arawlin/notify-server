@@ -1,10 +1,10 @@
 const { SimpleIntervalJob, AsyncTask } = require('toad-scheduler')
-const emailUtils = require('../libs/emailUtils')
+const emailProcess = require('../libs/emailProcess')
 
-emailUtils.init()
+emailProcess.init()
 
 const task = new AsyncTask('email queue task', async () => {
-  await emailUtils.doOnQueue()
+  await emailProcess.doOnQueue()
 })
 
-module.exports = new SimpleIntervalJob({ seconds: emailUtils.QUEUE_WAIT_TIME }, task)
+module.exports = new SimpleIntervalJob({ seconds: emailProcess.QUEUE_WAIT_TIME }, task)
