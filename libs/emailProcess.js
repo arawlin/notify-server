@@ -38,7 +38,7 @@ const send = async (subject, text, to) => {
     from: process.env.EMAIL_FROM,
     to,
     subject,
-    text,
+    html: `<p>${text}<p>`,
   }
 
   try {
@@ -81,9 +81,9 @@ const doOnQueue = async () => {
   for (const to in cts) {
     const subs = cts[to]
     for (const s in subs) {
-      const txs = subs[s]
-      const sextend = txs.length > 1 ? ' merged' : ''
-      await send(s + sextend, txs + '', to)
+      const sextend = subs[s].length > 1 ? ' merged' : ''
+      const txs = subs[s].reduce((pre, cur) => pre + `<p>${cur}</p>`, '')
+      await send(s + sextend, txs, to)
       await sleep(1 * 1000)
     }
   }
