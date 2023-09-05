@@ -3,8 +3,9 @@
 ## feature
 
 - [x] html content
-- [ ] silent time according msg hash
+- [x] silent time according msg hash
 - [ ] translate content
+- [ ] no disturb. 00:00 ~ 7:59
 
 ## template
 

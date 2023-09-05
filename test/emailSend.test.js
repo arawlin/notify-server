@@ -2,10 +2,10 @@ const emailSend = require('../libs/emailSend')
 
 describe('email send', () => {
   it('send one', async () => {
-    let res = await emailSend.send('test1', 'aaa')
+    let res = await emailSend.send('test1', 'aaa', null, { hash: '11111', deadline: 60000 })
     console.log(res)
 
-    res = await emailSend.send('test1', 'bbb')
+    res = await emailSend.send('test1', 'bbb', null, { hash: '11111', deadline: 60000 })
     console.log(res)
 
     const html = `

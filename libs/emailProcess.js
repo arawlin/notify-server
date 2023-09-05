@@ -1,8 +1,14 @@
 const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
+const { md5 } = require('crypto')
 
+// { subject, text, to }
 const queue = []
 const QUEUE_WAIT_TIME = 10
+
+// {hash: time}
+const mapSilent = new Map()
+const SILENT_TIME = 4 * 3600 * 1000
 
 let transporter
 
@@ -49,8 +55,14 @@ const send = async (subject, text, to) => {
   }
 }
 
-const sendInQueue = (subject, text, to) => {
-  queue.push({ subject, text, to })
+/**
+ * @param {*} subject
+ * @param {*} text
+ * @param {*} to
+ * @param {*} silent {hash, deadline}
+ */
+const sendInQueue = (subject, text, to, silent) => {
+  queue.push({ subject, text, to, silent })
 }
 
 const doOnQueue = async () => {
@@ -61,6 +73,16 @@ const doOnQueue = async () => {
     if (!ct) {
       break
     }
+
+    // filter silent
+    const hash = ct.silent?.hash ?? md5(ct.text)
+    const timeSilent = mapSilent.get(hash)
+    const timeCurr = new Date().getTime()
+    if (timeSilent && timeSilent > timeCurr) {
+      // consume it
+      continue
+    }
+    mapSilent.put(hash, timeCurr + ct.silent?.deadline ?? SILENT_TIME)
 
     let subs = cts[ct.to]
     if (!subs) {
@@ -85,6 +107,14 @@ const doOnQueue = async () => {
       const txs = subs[s].reduce((pre, cur) => pre + `<p>${cur}</p>`, '')
       await send(s + sextend, txs, to)
       await sleep(1 * 1000)
+    }
+  }
+
+  // clean silent stale
+  const timeCurr = new Date().getTime()
+  for (const [k, v] of mapSilent) {
+    if (v < timeCurr) {
+      mapSilent.delete(k)
     }
   }
 }
