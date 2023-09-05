@@ -1,10 +1,14 @@
-const { ToadScheduler } = require('toad-scheduler')
-const taskEmail = require('./taskEmail')
+// const { ToadScheduler } = require('toad-scheduler')
+// const taskToadEmail = require('./taskToadEmail')
+
+const schedule = require('node-schedule')
+const taskScheduleEmail = require('./taskScheduleEmail')
 
 const init = () => {
-  const scheduler = new ToadScheduler()
+  // const toadScheduler = new ToadScheduler()
+  // toadScheduler.addSimpleIntervalJob(taskToadEmail)
 
-  scheduler.addSimpleIntervalJob(taskEmail)
+  schedule.scheduleJob(taskScheduleEmail.cron, taskScheduleEmail.task)
 }
 
 module.exports = {

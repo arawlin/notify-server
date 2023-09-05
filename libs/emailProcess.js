@@ -129,7 +129,6 @@ const runQueue = async () => {
 }
 
 module.exports = {
-  QUEUE_WAIT_TIME,
   init,
   send,
   sendInQueue,
