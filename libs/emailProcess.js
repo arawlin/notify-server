@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
-const { md5 } = require('crypto')
+const { md5 } = require('./crypto')
 
 // { subject, text, to }
 const queue = []
@@ -80,9 +80,10 @@ const doOnQueue = async () => {
     const timeCurr = new Date().getTime()
     if (timeSilent && timeSilent > timeCurr) {
       // consume it
+      console.log(`msg has been consumed - ${ct.text.substring(0, Math.min(10, ct.text.length))}`)
       continue
     }
-    mapSilent.put(hash, timeCurr + ct.silent?.deadline ?? SILENT_TIME)
+    mapSilent.set(hash, timeCurr + (ct.silent?.deadline ?? SILENT_TIME))
 
     let subs = cts[ct.to]
     if (!subs) {

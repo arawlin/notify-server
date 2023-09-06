@@ -23,7 +23,7 @@ router.get('/', function (req, res, next) {
 
     // maybe nullish
     const emails = req.query?.emails
-    const silent = req.query?.silent
+    const silent = req.query?.silent && JSON.parse(req.query?.silent)
 
     emailProcess.sendInQueue(subject, text, emails, silent)
 
