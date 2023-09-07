@@ -102,8 +102,12 @@ const doOnQueue = async () => {
     // translate
     let text = ct.text
     if (ct.extend?.translate) {
-      const translation = translator.trans(text, translator.TARGET)
-      text = `<p>${translation}</p><p>${text}</p>`
+      try {
+        const translation = await translator.trans(text, translator.TARGET)
+        text = `<p>${translation}</p><p>${text}</p>`
+      } catch (e) {
+        console.error(`${new Date()} - translate`, e)
+      }
     }
 
     txs.push(text)
