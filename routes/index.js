@@ -24,8 +24,9 @@ router.get('/', function (req, res, next) {
     // maybe nullish
     const emails = req.query?.emails
     const silent = req.query?.silent && JSON.parse(req.query?.silent)
+    const extend = req.query?.extend && JSON.parse(req.query?.extend)
 
-    emailProcess.sendInQueue(subject, text, emails, silent)
+    emailProcess.sendInQueue(subject, text, emails, silent, extend)
 
     res.json(result(0))
   } catch (e) {

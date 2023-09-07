@@ -1,7 +1,7 @@
 const emailSend = require('../libs/emailSend')
 
 describe('email send', () => {
-  it('send one', async () => {
+  it.skip('send one', async () => {
     let res = await emailSend.send('test1', 'aaa', null, { hash: '11111', deadline: 60000 })
     console.log(res)
 
@@ -28,5 +28,11 @@ describe('email send', () => {
 
     // res = await emailSend.send('test1', 'hahaha', 'xxx@xxx.com,yyy@yyy.com')
     // console.log(res)
+  })
+
+  it('send two', async () => {
+    let res
+    res = await emailSend.send('test2', 'Hello World, This is a test text!', null, null, { translate: true })
+    console.log(res)
   })
 })

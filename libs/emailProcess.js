@@ -1,8 +1,9 @@
 const nodemailer = require('nodemailer')
 const { sleep } = require('./index')
 const { md5 } = require('./crypto')
+const translator = require('../libs/translator')
 
-// { subject, text, to }
+// { subject, text, to, silent, extend }
 const queue = []
 const QUEUE_WAIT_TIME = 10
 
@@ -60,9 +61,10 @@ const send = async (subject, text, to) => {
  * @param {*} text
  * @param {*} to
  * @param {*} silent {hash, deadline}
+ * @param {*} extend {translate}
  */
-const sendInQueue = (subject, text, to, silent) => {
-  queue.push({ subject, text, to, silent })
+const sendInQueue = (subject, text, to, silent, extend) => {
+  queue.push({ subject, text, to, silent, extend })
 }
 
 const doOnQueue = async () => {
@@ -97,7 +99,14 @@ const doOnQueue = async () => {
       txs = subs[ct.subject]
     }
 
-    txs.push(ct.text)
+    // translate
+    let text = ct.text
+    if (ct.extend?.translate) {
+      const translation = translator.trans(text, translator.TARGET)
+      text = `<p>${translation}</p><p>${text}</p>`
+    }
+
+    txs.push(text)
   }
   // console.log(cts)
 
