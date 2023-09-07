@@ -9,6 +9,25 @@
 
 - [ ] translate content
 
+## config
+
+### translator
+
+1. Create a service account key in the Google Cloud console
+
+   Google Cloud Shell
+
+   ```cmd
+   gcloud init
+   gcloud auth application-default login
+   ```
+
+1. Set the environment variable
+
+   ```cmd
+   export GOOGLE_APPLICATION_CREDENTIALS="KEY_JSON_PATH"
+   ```
+
 ## template
 
 `http://192.168.1.102:8080/?data=aaa`
