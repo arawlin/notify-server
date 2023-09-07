@@ -135,4 +135,7 @@ module.exports = {
   sendInQueue,
   doOnQueue,
   runQueue,
+
+  queue,
+  mapSilent,
 }

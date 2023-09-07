@@ -34,4 +34,12 @@ router.get('/', function (req, res, next) {
   }
 })
 
+router.get('/info', function (req, res, next) {
+  try {
+    res.json(result(0, '', { queue: emailProcess.queue, silent: emailProcess.mapSilent }))
+  } catch (e) {
+    console.error(e)
+    res.json(result(2, 'system error, retry'))
+  }
+})
 module.exports = router
